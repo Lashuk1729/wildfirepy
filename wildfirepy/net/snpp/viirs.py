@@ -159,6 +159,7 @@ class Viirs1KM:
             response = self.url_opener(url)
             print("Download Successful!")
             print("Writing file!")
+            Path(data_folder).mkdir(parents=True, exist_ok=True)
             with open(filename, 'wb') as file:
                 file.write(response.read())
             response.close()
