@@ -178,18 +178,9 @@ class VNP14A1(Viirs1KM):
         super().__init__(product='VNP14A1')
 
 
-class VNP09GA(Viirs1KM):
-    """
-    Class for VNP09GA product, i.e., daily surface reflectance.
-    """
-    def __init__(self):
-        super().__init__(product='VNP09GA')
-
-
 class Viirs1KMDownloader:
 
     def __init__(self):
-        self.surface_client = VNP09GA()
         self.fire_client = VNP14A1()
         self.converter = SinusoidalCoordinate()
 
@@ -214,7 +205,7 @@ class Viirs1KMDownloader:
         Returns
         -------
         data_dict : dict
-            dictionary with the surface and fire data filenames.
+            dictionary with the fire data filename.
         """
         all_files = glob.glob(str(path) + "/*h5")
         obsdatetime = datetime.strptime(obsdate, fmt)
@@ -222,15 +213,6 @@ class Viirs1KMDownloader:
         h, v = self.converter(latitude, longitude)
         h = str(h) if h > 9 else "0" + str(h)
         v = str(v) if v > 9 else "0" + str(v)
-
-        surface_files = re.compile(r'.*' + f'VNP09GA.A{date}.(h{h}v{v}).*')
-        match = list(filter(surface_files.match, all_files))
-        if len(match) != 0:
-            surface = match[0]
-        else:
-            warnings.warn(UserWarning("Surface data for the given information not found on the disk. \
-                                       Downloading the file!"))
-            surface = self.surface_client.get_h5(obsdate=obsdate, latitude=latitude, longitude=longitude, **kwargs)
 
         fire_files = re.compile(r'.*' + f'VNP14A1.A{date}.(h{h}v{v}).*')
         match = list(filter(fire_files.match, all_files))
@@ -241,5 +223,4 @@ class Viirs1KMDownloader:
                                        Downloading the file!"))
             fire = self.fire_client.get_h5(obsdate=obsdate, latitude=latitude, longitude=longitude, **kwargs)
 
-        return {'surface': surface,
-                'fire': fire}
+        return {'fire': fire}

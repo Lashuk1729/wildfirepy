@@ -15,8 +15,8 @@ class MapFactory(Io):
         self.kwargs = kwargs
 
     def load_data(self):
-        if isinstance(self.files, dict) and len(self.files) == 2:
-            if set(['surface', 'fire']) == self.files.keys():
+        if isinstance(self.files, dict) and len(self.files) == 1:
+            if set(['fire']) == self.files.keys():
                 return self.Viirs1KmLoader.get_data(self.files)
 
         elif set(['latitude', 'longitude', 'obsdate']).issubset(self.kwargs):
